@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Bebedouros</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="watermark-logo"></div>
+<header class="topbar">
+  <div class="topbar-title-row">
+    <h1>💧 Controle de Bebedouros</h1>
+    <div class="topbar-actions">
+      <label class="empresa-select-label">
+        Empresa
+        <img id="empresa-select-logo" class="empresa-select-logo hidden" alt="">
+        <select id="empresa-select"></select>
+      </label>
+      <button id="btn-theme-toggle" type="button" class="btn secondary small theme-toggle" title="Alternar modo claro/escuro">🌙</button>
+    </div>
+  </div>
+  <div id="sync-status" class="sync-status hidden">
+    <span id="sync-count"></span>
+    <button id="btn-sync-now" class="btn secondary small">Sincronizar agora</button>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="dashboard">Painel</button>
+    <button class="tab-btn" data-tab="registrar">Registrar</button>
+    <button class="tab-btn" data-tab="historico">Histórico</button>
+    <button class="tab-btn" data-tab="config">Configurações</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- PAINEL -->
+  <section id="tab-dashboard" class="tab-content active">
+    <div class="section-head">
+      <h2>Status dos bebedouros</h2>
+      <button id="btn-refresh-dashboard" class="btn secondary">Atualizar</button>
+    </div>
+    <div class="legend">
+      <span class="badge ok">Em dia</span>
+      <span class="badge atencao">Atenção</span>
+      <span class="badge atrasado">Atrasado</span>
+      <span class="badge nunca">Nunca feito</span>
+    </div>
+    <div id="cards-container" class="cards-grid"></div>
+  </section>
+
+  <!-- REGISTRAR -->
+  <section id="tab-registrar" class="tab-content">
+    <h2>Registrar troca de filtro ou limpeza</h2>
+    <form id="form-registro" class="form-card">
+      <label>
+        Bebedouro
+        <select id="reg-bebedouro" required></select>
+      </label>
+      <label>
+        Tipo de serviço
+        <select id="reg-tipo" required>
+          <option value="filtro">Troca de filtro</option>
+          <option value="limpeza">Limpeza</option>
+        </select>
+      </label>
+      <label>
+        Funcionário responsável
+        <select id="reg-funcionario" required></select>
+      </label>
+      <label>
+        Data
+        <input type="date" id="reg-data" required>
+      </label>
+      <label>
+        Observação (opcional)
+        <textarea id="reg-observacao" rows="2" placeholder="Ex: filtro trocado, sem problemas"></textarea>
+      </label>
+      <label>
+        Foto (opcional)
+        <input type="file" id="reg-foto" accept="image/*" capture="environment">
+        <span id="reg-foto-preview-wrap" class="foto-preview-wrap hidden">
+          <img id="reg-foto-preview" class="foto-preview" alt="Pré-visualização da foto">
+          <button type="button" id="btn-remover-foto" class="link-btn">remover foto</button>
+        </span>
+      </label>
+      <button type="submit" class="btn primary">Salvar registro</button>
+      <p id="reg-feedback" class="feedback"></p>
+    </form>
+  </section>
+
+  <!-- HISTORICO -->
+  <section id="tab-historico" class="tab-content">
+    <h2>Histórico de registros</h2>
+    <div class="filters">
+      <select id="hist-bebedouro"><option value="">Todos os bebedouros</option></select>
+      <select id="hist-tipo">
+        <option value="">Todos os tipos</option>
+        <option value="filtro">Troca de filtro</option>
+        <option value="limpeza">Limpeza</option>
+      </select>
+      <button id="btn-filtrar-historico" class="btn secondary">Filtrar</button>
+    </div>
+    <div class="table-wrap">
+      <table id="tbl-historico">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Bebedouro</th>
+            <th>Local</th>
+            <th>Tipo</th>
+            <th>Funcionário</th>
+            <th>Observação</th>
+            <th>Foto</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section id="tab-config" class="tab-content">
+    <h2>Configurações</h2>
+    <div class="cadastro-grid">
+      <div class="form-card">
+        <h3>Empresas</h3>
+        <form id="form-empresa" class="inline-form">
+          <input type="text" id="emp-nome" placeholder="Nome da empresa" required>
+          <button type="submit" class="btn primary">Adicionar</button>
+        </form>
+        <ul id="lista-empresas" class="cadastro-lista"></ul>
+      </div>
+      <div class="form-card">
+        <h3>Bebedouros</h3>
+        <form id="form-bebedouro" class="inline-form">
+          <select id="beb-empresa" required></select>
+          <input type="text" id="beb-nome" placeholder="Nome (ex: Bebedouro 1)" required>
+          <input type="text" id="beb-local" placeholder="Local (ex: 2º andar - RH)">
+          <button type="submit" class="btn primary">Adicionar</button>
+        </form>
+        <ul id="lista-bebedouros" class="cadastro-lista"></ul>
+      </div>
+      <div class="form-card">
+        <h3>Funcionários</h3>
+        <form id="form-funcionario" class="inline-form">
+          <input type="text" id="func-nome" placeholder="Nome do funcionário" required>
+          <button type="submit" class="btn primary">Adicionar</button>
+        </form>
+        <ul id="lista-funcionarios" class="cadastro-lista"></ul>
+      </div>
+      <div class="form-card">
+        <h3>Intervalos</h3>
+        <form id="form-config" class="config-form">
+          <label>
+            Trocar filtro a cada (dias)
+            <input type="number" id="cfg-filtro" min="1" required>
+          </label>
+          <label>
+            Limpar a cada (dias)
+            <input type="number" id="cfg-limpeza" min="1" required>
+          </label>
+          <button type="submit" class="btn primary">Salvar configurações</button>
+          <p id="cfg-feedback" class="feedback"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+</body>
+</html>
