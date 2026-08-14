@@ -2,6 +2,15 @@ const SUPABASE_URL = "https://jvfyqvefznkpcvjaerta.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZnlxdmVmem5rcGN2amFlcnRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMTQ4NjgsImV4cCI6MjEwMTc5MDg2OH0.2Ef6LpZ61WM8myHBYeQGo3TuGqk5C3x36ER_sWRNPS4";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Registra o service worker (app shell instalavel + funciona offline mesmo
+// abrindo do zero sem sinal nenhum). Se falhar (ex: navegador antigo), o
+// app continua funcionando normalmente, so sem esse reforço.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch((err) => console.warn("Service worker nao registrado:", err));
+  });
+}
+
 const STATUS_LABEL = {
   ok: "Em dia",
   atencao: "Atenção",
