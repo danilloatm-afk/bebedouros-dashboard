@@ -1,8 +1,8 @@
 :root {
   --bg: #f4f6f8;
   --surface: #ffffff;
-  --text: #1a1f26;
-  --text-muted: #5b6572;
+  --text: #10141a;
+  --text-muted: #3f4750;
   --border: #e2e6ea;
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
@@ -46,8 +46,8 @@
 :root[data-theme="light"] {
   --bg: #f4f6f8;
   --surface: #ffffff;
-  --text: #1a1f26;
-  --text-muted: #5b6572;
+  --text: #10141a;
+  --text-muted: #3f4750;
   --border: #e2e6ea;
   --ok-bg: #e8f7ee;
   --atencao-bg: #fef3c7;

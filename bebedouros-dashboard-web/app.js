@@ -221,6 +221,17 @@ function enfileirarRegistro(payload) {
   setFila(fila);
 }
 
+// O supabase-js nao rejeita a promise quando a rede falha — ele sempre
+// resolve com {data:null, error:{message:"TypeError: Failed to fetch"...}}.
+// Entao a unica forma de saber se foi "sem internet" (deve ir pra fila
+// offline) ou "servidor recusou os dados" (erro de verdade) e checando o
+// texto da mensagem.
+function pareceErroDeRede(mensagem) {
+  if (!mensagem) return false;
+  const m = String(mensagem).toLowerCase();
+  return m.includes("fetch") || m.includes("network") || m.includes("timeout") || m.includes("load failed");
+}
+
 // Tenta enviar um registro ao Supabase (incluindo a foto, se houver).
 // Retorna {offline:true} se nao conseguiu nem conversar com o servidor
 // (sem rede). Lanca erro normalmente se o servidor recusou os dados.
@@ -239,16 +250,12 @@ async function tentarEnviarRegistro(payload) {
         observacao: payload.observacao,
         foto_path: fotoPath,
       });
-      if (error) {
-        const e = new Error(error.message || "Erro ao salvar registro");
-        e.validacao = true;
-        throw e;
-      }
+      if (error) throw new Error(error.message || "Erro ao salvar registro");
     })());
     return { offline: false };
   } catch (err) {
-    if (err.validacao) throw err;
-    return { offline: true };
+    if (pareceErroDeRede(err.message)) return { offline: true };
+    throw err;
   }
 }
 
